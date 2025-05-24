@@ -1,12 +1,12 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import CreateRoom from './components/CreateRoom';
 import JoinRoom from './components/JoinRoom';
 import PokerRoom from './components/PokerRoom';
 
 function App() {
   return (
-    <Router basename="/planning-poker">
+    <Router>
       <Routes>
         <Route path="/" element={<JoinRoom />} />
         <Route path="/create" element={<CreateRoom />} />
