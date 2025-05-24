@@ -6,7 +6,7 @@ import PokerRoom from './components/PokerRoom';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/planning-poker">
       <Routes>
         <Route path="/" element={<JoinRoom />} />
         <Route path="/create" element={<CreateRoom />} />
