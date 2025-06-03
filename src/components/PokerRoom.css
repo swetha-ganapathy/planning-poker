@@ -1,3 +1,5 @@
+/* PokerRoom.css */
+
 .poker-container {
   max-width: 800px;
   margin: auto;
@@ -6,6 +8,13 @@
   font-family: 'Segoe UI', sans-serif;
   background: linear-gradient(to bottom, #eff6ff, #ffffff);
   min-height: 100vh;
+  position: relative;
+}
+
+.qr-code-floating {
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
 
 .poker-header h1 {
@@ -13,11 +22,58 @@
   margin-bottom: 20px;
 }
 
+.poker-header h3 {
+  color: #334155;
+  font-weight: 500;
+  margin-top: -10px;
+  margin-bottom: 20px;
+}
+
+.invite-section {
+  margin-top: 30px;
+}
+
+.share-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.share-box input {
+  padding: 10px;
+  font-size: 14px;
+  width: 340px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #f1f5f9;
+}
+
+.copy-btn {
+  padding: 10px 14px;
+  background-color: #1d4ed8;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.copy-btn:hover {
+  background-color: #1e40af;
+}
+
+.name-input {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
 .name-input input {
   padding: 12px;
   font-size: 16px;
   width: 60%;
-  margin-bottom: 30px;
   border-radius: 8px;
   border: 1px solid #ccc;
 }
@@ -49,6 +105,10 @@
   border-color: #1d4ed8;
   background-color: #1d4ed8;
   color: white;
+}
+
+.action-buttons {
+  margin-bottom: 30px;
 }
 
 .action-buttons button {
@@ -93,3 +153,20 @@
   margin: 10px 0;
 }
 
+.vote-breakdown {
+  margin-top: 30px;
+  text-align: left;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.vote-breakdown ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.vote-breakdown li {
+  font-size: 16px;
+  margin: 6px 0;
+}

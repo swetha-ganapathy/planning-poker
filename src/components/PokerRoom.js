@@ -1,36 +1,71 @@
+// PokerRoom.js
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { db, ref, set, onValue, remove } from '../firebase';
+import { db, ref, set, onValue, remove, onDisconnect, serverTimestamp } from '../firebase';
 import { QRCodeCanvas } from 'qrcode.react';
 import './PokerRoom.css';
 
-const cards = [1, 2, 3, 5, 8, 13, '?'];
+const cards = [0.5, 1, 2, 3, 5, 8, '?'];
 
 export default function PokerRoom() {
   const { roomId } = useParams();
   const [name, setName] = useState('');
+  const [isRegistered, setIsRegistered] = useState(false);
   const [localVote, setLocalVote] = useState('');
   const [votes, setVotes] = useState({});
   const [revealed, setRevealed] = useState(false);
+  const [activeUsers, setActiveUsers] = useState({});
+  const participantCount = Object.keys(votes).length;
+  const activeUserCount = Object.keys(activeUsers).length;
 
-  // Listen for changes in Firebase
+  const getVoteCounts = () => {
+    const counts = {};
+    Object.values(votes).forEach((vote) => {
+      counts[vote] = (counts[vote] || 0) + 1;
+    });
+    return counts;
+  };
+
+  const roomLink = `https://swetha-ganapathy.github.io/planning-poker/#/room/${roomId}`;
+
   useEffect(() => {
     const votesRef = ref(db, `rooms/${roomId}/votes`);
-    const revealRef = ref(db, `rooms/${roomId}/revealed`);
+    const revealedRef = ref(db, `rooms/${roomId}/revealed`);
+    const activeUsersRef = ref(db, `rooms/${roomId}/activeUsers`);
 
     onValue(votesRef, (snapshot) => {
-      const data = snapshot.val() || {};
-      setVotes(data);
+      setVotes(snapshot.val() || {});
     });
 
-    onValue(revealRef, (snapshot) => {
-      const value = snapshot.val();
-      setRevealed(value === true);
+    onValue(revealedRef, (snapshot) => {
+      setRevealed(snapshot.val() === true);
     });
+
+    onValue(activeUsersRef, (snapshot) => {
+      setActiveUsers(snapshot.val() || {});
+    });
+
+    return () => {
+      // Cleanup listeners if needed
+    };
   }, [roomId]);
 
+  useEffect(() => {
+    setIsRegistered(false);
+  }, [roomId]);
+
+  useEffect(() => {
+    if (name.trim() && !isRegistered) {
+      const userRef = ref(db, `rooms/${roomId}/activeUsers/${name}`);
+      set(userRef, { joinedAt: serverTimestamp() }).then(() => {
+        onDisconnect(userRef).remove();
+        setIsRegistered(true);
+      });
+    }
+  }, [name, roomId, isRegistered]);
+
   const castVote = () => {
-    if (!name || !localVote) return;
+    if (!name.trim() || !localVote) return;
     set(ref(db, `rooms/${roomId}/votes/${name}`), localVote);
     setLocalVote('');
   };
@@ -44,12 +79,17 @@ export default function PokerRoom() {
     set(ref(db, `rooms/${roomId}/revealed`), false);
   };
 
-  const roomLink = `https://swetha-ganapathy.github.io/planning-poker/#/room/${roomId}`;
-
   return (
     <div className="poker-container">
+      <div className="qr-code-floating">
+        <QRCodeCanvas value={roomLink} size={100} fgColor="#1e3a8a" />
+      </div>
+
       <div className="poker-header">
         <h1>Room ID: {roomId}</h1>
+        <h3>Active users: {activeUserCount}</h3>
+        <h3>Users who voted: {participantCount}</h3>
+
         <div className="invite-section">
           <p>Invite others to join:</p>
           <div className="share-box">
@@ -63,9 +103,6 @@ export default function PokerRoom() {
             >
               Copy Link
             </button>
-          </div>
-          <div className="qr-code">
-            <QRCodeCanvas value={roomLink} size={128} fgColor="#1e3a8a" />
           </div>
         </div>
       </div>
@@ -113,6 +150,19 @@ export default function PokerRoom() {
           ))}
         </ul>
       </div>
+
+      {revealed && (
+        <div className="vote-breakdown">
+          <h3>Vote Breakdown:</h3>
+          <ul>
+            {cards.map((card) => (
+              <li key={card}>
+                <strong>{card}</strong>: {getVoteCounts()[card] || 0} vote{getVoteCounts()[card] > 1 ? 's' : ''}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
