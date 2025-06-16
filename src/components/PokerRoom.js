@@ -10,7 +10,8 @@ import {
   onDisconnect,
   serverTimestamp,
   auth,
-  setDisplayName
+  setDisplayName,
+  onAuthStateChanged
 } from '../firebase';
 import { QRCodeCanvas } from 'qrcode.react';
 import './PokerRoom.css';
@@ -19,7 +20,7 @@ const cards = [0.5, 1, 2, 3, 5, 8, '?'];
 
 export default function PokerRoom() {
   const { roomId } = useParams();
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState(auth.currentUser?.displayName || '');
   const [isRegistered, setIsRegistered] = useState(false);
   const [localVote, setLocalVote] = useState('');
   const [votes, setVotes] = useState({});
@@ -27,12 +28,23 @@ export default function PokerRoom() {
   const [activeUsers, setActiveUsers] = useState({});
   const [copied, setCopied] = useState(false);
   const [admin, setAdmin] = useState(null);
+  const [adminUid, setAdminUid] = useState(null);
+
+  // Populate name from Firebase Auth when available
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user?.displayName && !userName) {
+        setUserName(user.displayName);
+      }
+    });
+    return unsubscribe;
+  }, [userName]);
 
   const roomLink = `https://swetha-ganapathy.github.io/planning-poker/#/room/${roomId}`;
   const participantCount = Object.keys(votes).length;
   const activeUserCount = Object.keys(activeUsers).length;
 
-  const isAdmin = userName && admin && userName === admin;
+  const isAdmin = auth.currentUser?.uid && adminUid === auth.currentUser.uid;
 
   const getVoteCounts = () => {
     const counts = {};
@@ -48,11 +60,13 @@ export default function PokerRoom() {
     const revealedRef = ref(db, `rooms/${roomId}/revealed`);
     const activeUsersRef = ref(db, `rooms/${roomId}/activeUsers`);
     const adminRef = ref(db, `rooms/${roomId}/admin`);
+    const adminUidRef = ref(db, `rooms/${roomId}/adminUid`);
 
     onValue(votesRef, (snapshot) => setVotes(snapshot.val() || {}));
     onValue(revealedRef, (snapshot) => setRevealed(snapshot.val() === true));
     onValue(activeUsersRef, (snapshot) => setActiveUsers(snapshot.val() || {}));
     onValue(adminRef, (snapshot) => setAdmin(snapshot.val() || null));
+    onValue(adminUidRef, (snapshot) => setAdminUid(snapshot.val() || null));
   }, [roomId]);
 
   useEffect(() => {

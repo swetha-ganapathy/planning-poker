@@ -71,5 +71,6 @@ export {
   serverTimestamp,
   get,
   auth,
-  setDisplayName
+  setDisplayName,
+  onAuthStateChanged
 };
