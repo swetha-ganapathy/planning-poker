@@ -10,8 +10,7 @@ import {
   onDisconnect,
   serverTimestamp,
   auth,
-  setDisplayName,
-  onAuthStateChanged
+  setDisplayName
 } from '../firebase';
 import { QRCodeCanvas } from 'qrcode.react';
 import './PokerRoom.css';
@@ -20,7 +19,7 @@ const cards = [0.5, 1, 2, 3, 5, 8, '?'];
 
 export default function PokerRoom() {
   const { roomId } = useParams();
-  const [userName, setUserName] = useState(auth.currentUser?.displayName || '');
+  const [userName, setUserName] = useState('');
   const [isRegistered, setIsRegistered] = useState(false);
   const [localVote, setLocalVote] = useState('');
   const [votes, setVotes] = useState({});
@@ -30,21 +29,19 @@ export default function PokerRoom() {
   const [admin, setAdmin] = useState(null);
   const [adminUid, setAdminUid] = useState(null);
 
-  // Populate name from Firebase Auth when available
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user?.displayName && !userName) {
-        setUserName(user.displayName);
-      }
-    });
-    return unsubscribe;
-  }, [userName]);
 
   const roomLink = `https://swetha-ganapathy.github.io/planning-poker/#/room/${roomId}`;
   const participantCount = Object.keys(votes).length;
   const activeUserCount = Object.keys(activeUsers).length;
 
   const isAdmin = auth.currentUser?.uid && adminUid === auth.currentUser.uid;
+
+  // Autofill the admin's name when the authenticated user is the admin
+  useEffect(() => {
+    if (isAdmin && admin && !userName) {
+      setUserName(admin);
+    }
+  }, [isAdmin, admin, userName]);
 
   const getVoteCounts = () => {
     const counts = {};
