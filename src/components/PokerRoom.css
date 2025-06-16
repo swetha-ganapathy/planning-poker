@@ -52,19 +52,6 @@
   background-color: #f1f5f9;
 }
 
-.copy-btn {
-  padding: 10px 14px;
-  background-color: #1d4ed8;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.copy-btn:hover {
-  background-color: #1e40af;
-}
-
 .name-input {
   margin-top: 20px;
   margin-bottom: 20px;
@@ -169,4 +156,23 @@
 .vote-breakdown li {
   font-size: 16px;
   margin: 6px 0;
+}
+
+.copy-btn {
+  padding: 10px 14px;
+  background-color: #1d4ed8;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.copy-btn:hover {
+  background-color: #1e40af;
+}
+
+.copy-btn.copied {
+  background-color: #43a6e8;
+  color: #f0fdf4;
 }
