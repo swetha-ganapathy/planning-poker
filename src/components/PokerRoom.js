@@ -10,7 +10,8 @@ import {
   onDisconnect,
   serverTimestamp,
   auth,
-  setDisplayName
+  setDisplayName,
+  onAuthStateChanged
 } from '../firebase';
 import { QRCodeCanvas } from 'qrcode.react';
 import './PokerRoom.css';
@@ -28,13 +29,22 @@ export default function PokerRoom() {
   const [copied, setCopied] = useState(false);
   const [admin, setAdmin] = useState(null);
   const [adminUid, setAdminUid] = useState(null);
+  const [currentUid, setCurrentUid] = useState(auth.currentUser?.uid || null);
+
+  // Keep track of authentication state
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUid(user?.uid || null);
+    });
+    return unsubscribe;
+  }, []);
 
 
   const roomLink = `https://swetha-ganapathy.github.io/planning-poker/#/room/${roomId}`;
   const participantCount = Object.keys(votes).length;
   const activeUserCount = Object.keys(activeUsers).length;
 
-  const isAdmin = auth.currentUser?.uid && adminUid === auth.currentUser.uid;
+  const isAdmin = currentUid && adminUid === currentUid;
 
   // Autofill the admin's name when the authenticated user is the admin
   useEffect(() => {
