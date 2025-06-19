@@ -50,6 +50,7 @@ export default function PokerRoom() {
   useEffect(() => {
     if (isAdmin && admin && !userName) {
       setUserName(admin);
+      registerUser(admin);
     }
   }, [isAdmin, admin, userName]);
 
@@ -81,21 +82,27 @@ export default function PokerRoom() {
   }, [roomId]);
 
   // Sync user name with Firebase Auth & presence
-  useEffect(() => {
-    if (userName.trim()) {
-      setDisplayName(userName);
+  // Register the user in the activeUsers list once their name is finalized
+  const registerUser = (name = userName) => {
+    const trimmed = name.trim();
+    if (!trimmed || !currentUid) return;
+
+    setDisplayName(trimmed);
+
+    const userRef = ref(db, `rooms/${roomId}/activeUsers/${currentUid}`);
+    set(userRef, { name: trimmed, joinedAt: serverTimestamp() }).then(() => {
       if (!isRegistered) {
-        const userRef = ref(db, `rooms/${roomId}/activeUsers/${userName}`);
-        set(userRef, { joinedAt: serverTimestamp() }).then(() => {
-          onDisconnect(userRef).remove();
-          setIsRegistered(true);
-        });
+        onDisconnect(userRef).remove();
+        setIsRegistered(true);
       }
-    }
-  }, [userName, roomId, isRegistered]);
+    });
+  };
 
   const castVote = () => {
     if (!userName.trim() || !localVote) return;
+    if (!isRegistered) {
+      registerUser();
+    }
     set(ref(db, `rooms/${roomId}/votes/${userName}`), localVote);
     setLocalVote('');
   };
@@ -149,6 +156,7 @@ export default function PokerRoom() {
           placeholder="Enter your name"
           value={userName}
           onChange={(e) => setUserName(e.target.value)}
+          onBlur={registerUser}
         />
       </div>
 
