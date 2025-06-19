@@ -10,7 +10,8 @@ import {
   onDisconnect,
   serverTimestamp,
   auth,
-  setDisplayName
+  setDisplayName,
+  onAuthStateChanged
 } from '../firebase';
 import { QRCodeCanvas } from 'qrcode.react';
 import './PokerRoom.css';
@@ -27,12 +28,31 @@ export default function PokerRoom() {
   const [activeUsers, setActiveUsers] = useState({});
   const [copied, setCopied] = useState(false);
   const [admin, setAdmin] = useState(null);
+  const [adminUid, setAdminUid] = useState(null);
+  const [currentUid, setCurrentUid] = useState(auth.currentUser?.uid || null);
+
+  // Keep track of authentication state
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUid(user?.uid || null);
+    });
+    return unsubscribe;
+  }, []);
+
 
   const roomLink = `https://swetha-ganapathy.github.io/planning-poker/#/room/${roomId}`;
   const participantCount = Object.keys(votes).length;
   const activeUserCount = Object.keys(activeUsers).length;
 
-  const isAdmin = userName && admin && userName === admin;
+  const isAdmin = currentUid && adminUid === currentUid;
+
+  // Autofill the admin's name when the authenticated user is the admin
+  useEffect(() => {
+    if (isAdmin && admin && !userName) {
+      setUserName(admin);
+      registerUser(admin);
+    }
+  }, [isAdmin, admin, userName]);
 
   const getVoteCounts = () => {
     const counts = {};
@@ -48,11 +68,13 @@ export default function PokerRoom() {
     const revealedRef = ref(db, `rooms/${roomId}/revealed`);
     const activeUsersRef = ref(db, `rooms/${roomId}/activeUsers`);
     const adminRef = ref(db, `rooms/${roomId}/admin`);
+    const adminUidRef = ref(db, `rooms/${roomId}/adminUid`);
 
     onValue(votesRef, (snapshot) => setVotes(snapshot.val() || {}));
     onValue(revealedRef, (snapshot) => setRevealed(snapshot.val() === true));
     onValue(activeUsersRef, (snapshot) => setActiveUsers(snapshot.val() || {}));
     onValue(adminRef, (snapshot) => setAdmin(snapshot.val() || null));
+    onValue(adminUidRef, (snapshot) => setAdminUid(snapshot.val() || null));
   }, [roomId]);
 
   useEffect(() => {
@@ -60,21 +82,27 @@ export default function PokerRoom() {
   }, [roomId]);
 
   // Sync user name with Firebase Auth & presence
-  useEffect(() => {
-    if (userName.trim()) {
-      setDisplayName(userName);
+  // Register the user in the activeUsers list once their name is finalized
+  const registerUser = (name = userName) => {
+    const trimmed = name.trim();
+    if (!trimmed || !currentUid) return;
+
+    setDisplayName(trimmed);
+
+    const userRef = ref(db, `rooms/${roomId}/activeUsers/${currentUid}`);
+    set(userRef, { name: trimmed, joinedAt: serverTimestamp() }).then(() => {
       if (!isRegistered) {
-        const userRef = ref(db, `rooms/${roomId}/activeUsers/${userName}`);
-        set(userRef, { joinedAt: serverTimestamp() }).then(() => {
-          onDisconnect(userRef).remove();
-          setIsRegistered(true);
-        });
+        onDisconnect(userRef).remove();
+        setIsRegistered(true);
       }
-    }
-  }, [userName, roomId, isRegistered]);
+    });
+  };
 
   const castVote = () => {
     if (!userName.trim() || !localVote) return;
+    if (!isRegistered) {
+      registerUser();
+    }
     set(ref(db, `rooms/${roomId}/votes/${userName}`), localVote);
     setLocalVote('');
   };
@@ -128,6 +156,7 @@ export default function PokerRoom() {
           placeholder="Enter your name"
           value={userName}
           onChange={(e) => setUserName(e.target.value)}
+          onBlur={registerUser}
         />
       </div>
 
