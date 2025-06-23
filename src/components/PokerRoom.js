@@ -156,7 +156,7 @@ export default function PokerRoom() {
           placeholder="Enter your name"
           value={userName}
           onChange={(e) => setUserName(e.target.value)}
-          onBlur={registerUser}
+          onBlur={() => registerUser()}
         />
       </div>
 
