@@ -5,6 +5,34 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: var(--background, #fff);
+  color: var(--text-primary, #000);
+}
+
+:root {
+  --background: #ffffff;
+  --card-bg: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #374151;
+  --accent: #1d4ed8;
+  --btn-bg: #2563eb;
+  --btn-hover: #1e40af;
+  --create-bg: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+  --join-bg: linear-gradient(135deg, #f0f4ff, #dbeafe);
+  --poker-bg: linear-gradient(to bottom, #eff6ff, #ffffff);
+}
+
+body.dark {
+  --background: #0f172a;
+  --card-bg: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --accent: #93c5fd;
+  --btn-bg: #3b82f6;
+  --btn-hover: #60a5fa;
+  --create-bg: #0f172a;
+  --join-bg: #0f172a;
+  --poker-bg: #0f172a;
 }
 
 code {
