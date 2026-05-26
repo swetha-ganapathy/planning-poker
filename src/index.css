@@ -10,29 +10,29 @@ body {
 }
 
 :root {
-  --background: #ffffff;
+  --background: #eff6ff;
   --card-bg: #ffffff;
-  --text-primary: #111827;
-  --text-secondary: #374151;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
   --accent: #1d4ed8;
-  --btn-bg: #2563eb;
+  --btn-bg: #1d4ed8;
   --btn-hover: #1e40af;
-  --create-bg: linear-gradient(135deg, #e0f2fe, #f0f9ff);
-  --join-bg: linear-gradient(135deg, #f0f4ff, #dbeafe);
-  --poker-bg: linear-gradient(to bottom, #eff6ff, #ffffff);
+  --create-bg: #eff6ff;
+  --join-bg: #eff6ff;
+  --poker-bg: #eff6ff;
 }
 
 body.dark {
-  --background: #0f172a;
-  --card-bg: #1e293b;
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --accent: #93c5fd;
-  --btn-bg: #3b82f6;
-  --btn-hover: #60a5fa;
-  --create-bg: #0f172a;
-  --join-bg: #0f172a;
-  --poker-bg: #0f172a;
+  --background: #06090f;
+  --card-bg: #0d1526;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --accent: #60a5fa;
+  --btn-bg: #1d4ed8;
+  --btn-hover: #2563eb;
+  --create-bg: #06090f;
+  --join-bg: #06090f;
+  --poker-bg: #06090f;
 }
 
 code {

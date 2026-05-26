@@ -4,7 +4,6 @@ import CreateRoom from './components/CreateRoom';
 import JoinRoom from './components/JoinRoom';
 import PokerRoom from './components/PokerRoom';
 import { ThemeProvider } from './ThemeContext';
-import ThemeToggle from './ThemeToggle';
 
 function App() {
   return (
@@ -16,7 +15,6 @@ function App() {
           <Route path="/room/:roomId" element={<PokerRoom />} />
         </Routes>
       </Router>
-      <ThemeToggle />
     </ThemeProvider>
   );
 }

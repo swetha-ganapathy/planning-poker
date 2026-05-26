@@ -1,61 +1,222 @@
+/* JoinRoom.css */
+
 .join-container {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: var(--join-bg);
+  background: linear-gradient(160deg, #eff6ff 0%, #e0f2fe 100%);
+  padding: 24px;
+}
+
+body.dark .join-container {
+  background: linear-gradient(160deg, #06090f 0%, #0a1628 100%);
 }
 
 .join-card {
-  background-color: var(--card-bg);
-  padding: 40px;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  width: 90%;
-  max-width: 400px;
-}
-
-.join-card h1 {
-  margin-bottom: 10px;
-  color: var(--accent);
-}
-
-.join-card h2 {
-  margin-bottom: 20px;
-  color: var(--text-secondary);
-}
-
-.join-card input {
-  padding: 10px;
+  background: var(--card-bg);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(29, 78, 216, 0.12);
   width: 100%;
-  margin-bottom: 20px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 16px;
-}
-
-.join-btn,
-.create-btn {
-  width: 100%;
-  padding: 12px;
-  margin-top: 8px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.join-btn {
-  background-color: var(--btn-bg);
-  color: white;
-}
-
-.create-btn {
-  background-color: #e0e7ff;
-  color: #1e40af;
+  max-width: 440px;
+  overflow: hidden;
 }
 
 body.dark .join-card {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Gradient header ── */
+.join-header {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 60%, #2563eb 100%);
+  padding: 36px 32px 28px;
+  text-align: center;
+  color: white;
+}
+
+.join-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+  margin-bottom: 14px;
+  color: #fde68a;
+}
+
+.join-header h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin: 0 0 10px;
+  letter-spacing: -0.02em;
+  color: white;
+}
+
+.join-header p {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Body ── */
+.join-body {
+  padding: 28px 32px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.join-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.join-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #1d4ed8;
+}
+
+body.dark .join-label {
+  color: #3b82f6;
+}
+
+/* ── Input ── */
+.join-body input {
+  padding: 13px 18px;
+  font-size: 15px;
+  border-radius: 12px;
+  border: 2px solid #bfdbfe;
+  background: #eff6ff;
+  color: var(--text-primary);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.join-body input:focus {
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.12);
+}
+
+body.dark .join-body input {
+  background: #06090f;
+  color: #f1f5f9;
+  border-color: #1e3a8a;
+}
+
+body.dark .join-body input:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+}
+
+.join-body input::placeholder {
+  color: #94a3b8;
+}
+
+body.dark .join-body input::placeholder {
+  color: #334155;
+}
+
+/* ── Error ── */
+.join-error {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 0;
+}
+
+body.dark .join-error {
+  color: #fca5a5;
+  background: #1f0a0a;
+  border-color: #7f1d1d;
+}
+
+/* ── Join button ── */
+.join-btn {
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  color: white;
+  padding: 14px 24px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+  box-shadow: 0 4px 16px rgba(29, 78, 216, 0.3);
+  letter-spacing: 0.01em;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.join-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(29, 78, 216, 0.4);
+}
+
+.join-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Divider ── */
+.join-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.join-divider::before,
+.join-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #bfdbfe;
+}
+
+body.dark .join-divider::before,
+body.dark .join-divider::after {
+  background: #1e3a8a;
+}
+
+/* ── Create button ── */
+.create-btn {
+  background: transparent;
+  color: #1d4ed8;
+  padding: 13px 24px;
+  border: 2px solid #bfdbfe;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  letter-spacing: 0.01em;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.create-btn:hover {
+  background: #eff6ff;
+  border-color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+body.dark .create-btn {
+  color: #60a5fa;
+  border-color: #1e3a8a;
+}
+
+body.dark .create-btn:hover {
+  background: #0d1526;
+  border-color: #60a5fa;
 }
