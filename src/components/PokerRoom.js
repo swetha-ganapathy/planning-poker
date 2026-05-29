@@ -138,6 +138,35 @@ export default function PokerRoom() {
     }
   };
 
+  const reactionOptions = [
+    { emoji: '👍', label: 'Thumbs up' },
+    { emoji: '👎', label: 'Thumbs down' },
+    { emoji: '❤️', label: 'Heart' },
+    { emoji: '😊', label: 'Smile' },
+    { emoji: '😂', label: 'Laugh' },
+    { emoji: '😢', label: 'Cry' },
+  ];
+
+  const reactionCounts = useMemo(() => {
+    const counts = {};
+    Object.values(reactions).forEach((r) => {
+      if (r?.emoji) counts[r.emoji] = (counts[r.emoji] || 0) + 1;
+    });
+    return counts;
+  }, [reactions]);
+
+  const sendReaction = (emoji) => {
+    const trimmed = userName.trim();
+    if (!trimmed || !currentUid) return;
+    if (!isRegistered) registerUser();
+    const reactionRef = ref(db, `rooms/${roomId}/reactions/${currentUid}`);
+    if (reactions[currentUid]?.emoji === emoji) {
+      remove(reactionRef);
+    } else {
+      set(reactionRef, { emoji, name: trimmed, createdAt: serverTimestamp() });
+    }
+  };
+
   const sortedReactions = useMemo(() => {
     return Object.entries(reactions)
       .map(([uid, reaction]) => ({ uid, ...reaction }))
@@ -206,57 +235,47 @@ export default function PokerRoom() {
         </div>
       </div>
 
-      {/* Stats */}
+      {/* Stats — full width */}
       <div className="room-stats">
         <span className="stat-pill">👥 Active: <strong>{activeUserCount}</strong></span>
         <span className="stat-pill">✅ Voted: <strong>{participantCount}</strong></span>
       </div>
 
-      {/* Votes */}
-      {participantCount > 0 && (
-        <div className="page-section">
-          <p className="section-label">Votes</p>
-          <div className="vote-grid">
-            {Object.entries(votes).map(([user, vote]) => (
-              <div className="vote-card" key={user}>
-                <span className="vote-card-value">{revealed ? vote : '?'}</span>
-                <span className="vote-card-name">{user}</span>
-              </div>
+      {/* Name + Reactions side by side */}
+      <div className="name-reaction-row">
+
+        {/* Name */}
+        <div className="page-section name-reaction-name">
+          <p className="section-label">Your Name</p>
+          <div className="name-input">
+            <input
+              type="text"
+              placeholder="Enter your name"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              onBlur={() => registerUser()}
+            />
+          </div>
+        </div>
+
+        {/* Reactions */}
+        <div className="page-section name-reaction-reactions">
+          <p className="section-label">Reactions</p>
+          <div className="reaction-bar">
+            {reactionOptions.map(({ emoji, label }) => (
+              <button
+                key={emoji}
+                className={`reaction-btn${reactions[currentUid]?.emoji === emoji ? ' active' : ''}`}
+                onClick={() => sendReaction(emoji)}
+                title={label}
+              >
+                <span className="reaction-emoji">{emoji}</span>
+                <span className="reaction-count">{reactionCounts[emoji] || 0}</span>
+              </button>
             ))}
           </div>
         </div>
-      )}
 
-      {/* Vote breakdown */}
-      {revealed && participantCount > 0 && (
-        <div className="page-section">
-          <p className="section-label">Vote Breakdown</p>
-          <div className="breakdown-grid">
-            {cards.filter(card => getVoteCounts()[card]).map(card => (
-              <div className="breakdown-item" key={card}>
-                <span className="breakdown-card-chip">{card}</span>
-                <div className="breakdown-tally">
-                  <span className="breakdown-count">{getVoteCounts()[card]}</span>
-                  <span className="breakdown-label">vote{getVoteCounts()[card] > 1 ? 's' : ''}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Name */}
-      <div className="page-section">
-        <p className="section-label">Your Name</p>
-        <div className="name-input">
-          <input
-            type="text"
-            placeholder="Enter your name"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            onBlur={() => registerUser()}
-          />
-        </div>
       </div>
 
       {/* Card selection + submit */}
@@ -291,6 +310,41 @@ export default function PokerRoom() {
             <button className="lock-btn" onClick={() => set(ref(db, `rooms/${roomId}/locked`), !locked)}>
               {locked ? '🔓 Unlock' : '🔒 Lock'}
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Votes */}
+      <div className="page-section">
+        <p className="section-label">Votes</p>
+        {participantCount > 0 ? (
+          <div className="vote-grid">
+            {Object.entries(votes).map(([user, vote]) => (
+              <div className="vote-card" key={user}>
+                <span className="vote-card-value">{revealed ? vote : '?'}</span>
+                <span className="vote-card-name">{user}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="no-votes-msg">Waiting for votes…</p>
+        )}
+      </div>
+
+      {/* Vote breakdown */}
+      {revealed && participantCount > 0 && (
+        <div className="page-section">
+          <p className="section-label">Vote Breakdown</p>
+          <div className="breakdown-grid">
+            {cards.filter(card => getVoteCounts()[card]).map(card => (
+              <div className="breakdown-item" key={card}>
+                <span className="breakdown-card-chip">{card}</span>
+                <div className="breakdown-tally">
+                  <span className="breakdown-count">{getVoteCounts()[card]}</span>
+                  <span className="breakdown-label">vote{getVoteCounts()[card] > 1 ? 's' : ''}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}

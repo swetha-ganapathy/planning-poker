@@ -132,6 +132,36 @@ body.dark .stat-pill {
   box-shadow: 0 2px 8px rgba(29, 78, 216, 0.15);
 }
 
+/* ── Name + Reactions side-by-side row ── */
+.name-reaction-row {
+  display: flex;
+  gap: 14px;
+  align-items: stretch;
+  margin-bottom: 14px;
+}
+
+.name-reaction-name {
+  flex: 1;
+  margin-bottom: 0 !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.name-reaction-reactions {
+  flex: 1;
+  margin-bottom: 0 !important;
+}
+
+@media (max-width: 700px) {
+  .name-reaction-row {
+    flex-direction: column;
+  }
+  .name-reaction-name {
+    flex: unset;
+  }
+}
+
 /* ── Page sections ── */
 .page-section {
   background: var(--card-bg);
@@ -484,14 +514,14 @@ body.dark .breakdown-item {
 
 /* Mini playing-card chip showing the voted value */
 .breakdown-card-chip {
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-weight: 800;
   color: #1d4ed8;
   background: #ffffff;
   border: 2px solid #bfdbfe;
-  border-radius: 10px;
-  width: 44px;
-  height: 44px;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -530,6 +560,76 @@ body.dark .breakdown-count {
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+/* ── Reaction bar ── */
+.reaction-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.reaction-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #eff6ff;
+  border: 2px solid #bfdbfe;
+  border-radius: 999px;
+  padding: 9px 18px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease-in-out;
+  color: var(--text-primary);
+}
+
+.reaction-btn:hover {
+  border-color: #1d4ed8;
+  background: #dbeafe;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(29, 78, 216, 0.15);
+}
+
+.reaction-btn.active {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  color: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(29, 78, 216, 0.3);
+}
+
+.reaction-emoji {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.reaction-count {
+  font-size: 0.88rem;
+  font-weight: 700;
+  min-width: 14px;
+  text-align: center;
+}
+
+.reaction-btn.active .reaction-count {
+  color: #ffffff;
+}
+
+body.dark .reaction-btn {
+  background: #0d1526;
+  border-color: #1e3a8a;
+  color: #e2e8f0;
+}
+
+body.dark .reaction-btn:hover {
+  background: #0c1f4a;
+  border-color: #60a5fa;
+}
+
+body.dark .reaction-btn.active {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  color: #ffffff;
 }
 
 /* ── Floating reactions ── */
@@ -669,11 +769,11 @@ body.dark .floating-reaction {
     opacity: 1;
   }
   60% {
-    transform: translateY(-240px) scale(1.02);
+    transform: translateY(-420px) scale(1.02);
     opacity: 0.9;
   }
   100% {
-    transform: translateY(-420px) scale(1);
+    transform: translateY(-700px) scale(1);
     opacity: 0;
   }
 }
